@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { SearchPageResposneDto } from './dto';
 
 @Injectable()
 export class PageService {
-  search(): string {
-    return 'Hello World!';
+  search(): SearchPageResposneDto {
+    return new SearchPageResposneDto();
   }
 }

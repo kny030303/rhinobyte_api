@@ -20,6 +20,7 @@ import { randomUUID } from 'crypto';
     AuthModule,
     PageModule,
     DocumentModule,
+    DocumentModule,
   ],
   controllers: [],
   providers: [],

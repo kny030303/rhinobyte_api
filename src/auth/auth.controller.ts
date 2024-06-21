@@ -14,14 +14,16 @@ import {
   LoginUserResponseDto,
   AccessUserDto,
 } from './dto';
-import { ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
 
 @Controller('user')
 export class AuthController {
   constructor(private readonly userService: AuthService) {}
 
+  @ApiOperation({
+    summary: '회원가입 API',
+  })
   @ApiCreatedResponse({
-    description: '사용자 회원가입',
     type: SignupUserResponseDto,
   })
   @Post('/signup')
@@ -33,6 +35,9 @@ export class AuthController {
     }
   }
 
+  @ApiOperation({
+    summary: '로그인 API',
+  })
   @ApiCreatedResponse({
     description: '사용자 로그인',
     type: LoginUserResponseDto,
@@ -46,6 +51,9 @@ export class AuthController {
     }
   }
 
+  @ApiOperation({
+    summary: '회원가입 인증 API',
+  })
   @Get('/access')
   async access(@Query() user: AccessUserDto): Promise<void> {
     try {
