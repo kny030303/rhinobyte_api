@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { DocumentService } from './document.service';
-import { DocumentController } from './document.controller';
 import { AuthModule } from '../auth';
-import { S3Module } from 'src/s3';
+import { S3Module } from '../s3';
+import { DocumentController } from './document.controller';
 
 @Module({
   imports: [AuthModule, S3Module],

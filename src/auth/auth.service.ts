@@ -1,4 +1,10 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   SignupUserDto,
   SignupUserResponseDto,
@@ -9,6 +15,7 @@ import {
 import { EmailService } from 'src/email';
 import { JwtService } from '@nestjs/jwt';
 import { PasswordService } from '../password';
+import { AccessUserRepository, UserRepository } from '../database';
 
 @Injectable()
 export class AuthService {
@@ -16,22 +23,40 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,
     private readonly passwordService: PasswordService,
+    private readonly userRepository: UserRepository,
+    private readonly accessUserRepository: AccessUserRepository,
   ) {}
 
-  async signup(user: SignupUserDto): Promise<SignupUserResponseDto> {
-    const { email, password } = user;
+  async signup(signUpRequest: SignupUserDto): Promise<SignupUserResponseDto> {
+    const { email, password } = signUpRequest;
 
     // TODO: test 이후 주석 해제
     // this.checkVerifyEmail(email);
 
-    // TODO: DB 조회 후 중복된 이메일이 있는지 확인
+    const user = await this.userRepository.findOne({
+      where: { USER_EMAIL: email },
+    });
 
-    const token = this.generateVerifyKey(email);
-    // TODO: DB에 사용자 정보 저장과 verify_key 저장 로직 추가
-    await this.emailService.sendEmail(user.email, token);
+    if (user) {
+      throw new ConflictException('There is a same user already.');
+    }
 
-    // TODO: 30분 후에 verify_key 만료 처리
-    return new SignupUserResponseDto({ user: { email }, message: 'SUCCESS' });
+    const hash_password = this.passwordService.hashPassword(password);
+    const verify_key = this.generateVerifyKey(email);
+
+    const userEntity = await this.accessUserRepository.create({
+      USER_EMAIL: email,
+      USER_PASSWORD: hash_password,
+      USER_VERIFY_KEY: verify_key,
+    });
+
+    await this.accessUserRepository.save(userEntity);
+    await this.emailService.sendEmail(signUpRequest.email, verify_key);
+
+    return new SignupUserResponseDto({
+      user: { email: userEntity.USER_EMAIL },
+      message: 'SUCCESS',
+    });
   }
 
   async login(user: LoginUserDto): Promise<LoginUserResponseDto> {
@@ -40,31 +65,47 @@ export class AuthService {
     // TODO: test 이후 주석 해제
     // this.checkVerifyEmail(email);
 
-    this.passwordService.verify(email, password);
+    await this.passwordService.verify(email, password);
 
     const payload = { email };
-    const userData: LoginUserResponseDto = {
+
+    return new LoginUserResponseDto({
       user: {
         email,
       },
       message: 'SUCCESS',
       token: await this.jwtService.signAsync(payload),
-    };
-
-    return new LoginUserResponseDto(userData);
+    });
   }
 
-  async access(user: AccessUserDto): Promise<void> {
-    const { email, token } = user;
-    // TODO:  email과 token 검증 로직 추가
-    // TODO: 실패시 token 만료
-    // TODO: 성공시 user access
+  async access(accessUserRequest: AccessUserDto): Promise<void> {
+    const { email, verify_key } = accessUserRequest;
+    const accessUser = await this.accessUserRepository.findOne({
+      where: {
+        USER_EMAIL: email,
+        USER_VERIFY_KEY: verify_key,
+        USER_ACCESS: false,
+      },
+    });
+
+    if (!accessUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (this.isMoreThanThirtyMinutesOld(accessUser.CREATED_AT)) {
+      throw new UnauthorizedException('Verify key expired');
+    }
+
+    await this.userRepository.save({
+      USER_EMAIL: email,
+      USER_PASSWORD: accessUser.USER_PASSWORD,
+    });
   }
 
   private generateVerifyKey(email: string): string {
-    const verify_key = Buffer.from(`${email}_${new Date().getTime()}`).toString(
-      'base64',
-    );
+    const verify_key = Buffer.from(
+      `{email: ${email}, date:${new Date().getTime()}}`,
+    ).toString('base64');
     return verify_key;
   }
 
@@ -72,5 +113,11 @@ export class AuthService {
     if (email.split('@')[1] !== 'promotion.kr') {
       throw new NotAcceptableException('Invalid email domain');
     }
+  }
+
+  private isMoreThanThirtyMinutesOld(date) {
+    const currentTime = new Date();
+    const thirtyMinutesAgo = new Date(currentTime.getTime() - 30 * 60 * 1000);
+    return new Date(date) < thirtyMinutesAgo;
   }
 }

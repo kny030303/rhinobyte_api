@@ -1,13 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class PageListDto {
   label_list: string[];
 }
+
 export class createDocumentDto {
   @ApiProperty()
   @IsString()
-  file_name: string;
+  dc_name: string;
 
   @ApiProperty()
   @IsString()

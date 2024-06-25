@@ -17,6 +17,6 @@ export class PageController {
   })
   @Post()
   search(@Body() body: SearchPageDto): SearchPageResposneDto {
-    return this.pageService.search();
+    return this.pageService.search(body);
   }
 }

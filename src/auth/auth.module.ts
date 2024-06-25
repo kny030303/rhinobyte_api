@@ -5,6 +5,7 @@ import { EmailModule } from '../email';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PasswordModule } from '../password';
+import { AccessUserRepositoryModule, UserRepositoryModule } from '../database';
 
 @Module({
   imports: [
@@ -18,6 +19,8 @@ import { PasswordModule } from '../password';
     }),
     EmailModule,
     PasswordModule,
+    UserRepositoryModule,
+    AccessUserRepositoryModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],

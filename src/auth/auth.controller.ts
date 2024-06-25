@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  NotFoundException,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   SignupUserDto,
@@ -52,7 +45,7 @@ export class AuthController {
   }
 
   @ApiOperation({
-    summary: '회원가입 인증 API',
+    summary: '회원가입 성공 인증 API',
   })
   @Get('/access')
   async access(@Query() user: AccessUserDto): Promise<void> {

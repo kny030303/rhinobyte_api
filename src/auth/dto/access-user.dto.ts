@@ -12,11 +12,11 @@ export class AccessUserDto {
   email: string;
 
   /**
-   * 사용자 회원가입 인증 토큰
+   * 사용자 회원가입 인증 키
    * @example testtoken
    */
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  token: string;
+  verify_key: string;
 }

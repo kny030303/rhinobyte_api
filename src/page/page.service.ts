@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { SearchPageResposneDto } from './dto';
+import { SearchPageDto, SearchPageResposneDto } from './dto';
 
 @Injectable()
 export class PageService {
-  search(): SearchPageResposneDto {
+  search(page_condition: SearchPageDto): SearchPageResposneDto {
+    // TODO: 검색 조건에 맞게 페이지를 검색합니다.
     return new SearchPageResposneDto();
   }
 }
