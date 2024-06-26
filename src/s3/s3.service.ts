@@ -18,23 +18,18 @@ export class S3Service {
     });
   }
 
-  async uploadPdfFile(file: fileDto) {
-    const { file_name: name, buffer } = file;
-    const uploadParams = {
-      Bucket: this.configService.get<string>('AWS_BUCKET_NAME'),
-      Key: file.file_name,
-      Body: file.buffer,
-    };
+  async uploadPdfFile(file: fileDto): Promise<string> {
+    const { file_name, buffer } = file;
+
     const command = new PutObjectCommand({
-      Bucket: this.configService.get('AWS_S3_BUCKET_NAME'),
-      Key: file.file_name,
-      Body: file.buffer,
-      ACL: 'public-read',
-      ContentType: `image/pdf`,
+      Bucket: this.configService.get<string>('AWS_BUCKET_NAME'),
+      Key: file_name,
+      Body: buffer.buffer,
+      ContentType: 'application/pdf',
     });
 
     await this.s3Client.send(command);
 
-    return `https://s3.${this.configService.get<string>('AWS_REGION')}.amazonaws.com/${this.configService.get<string>('AWS_BUCKET_NAME')}/${name}`;
+    return `https://s3.${this.configService.get<string>('AWS_REGION')}.amazonaws.com/${this.configService.get<string>('AWS_BUCKET_NAME')}/${file_name}`;
   }
 }

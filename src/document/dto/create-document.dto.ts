@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class PageListDto {
-  label_list: string[];
+  label: string[];
 }
 
 export class createDocumentDto {
@@ -16,19 +16,23 @@ export class createDocumentDto {
 
   @ApiProperty()
   @IsString()
-  client: string;
+  @IsOptional()
+  client?: string;
 
   @ApiProperty()
   @IsString()
-  business: string;
+  @IsOptional()
+  business?: string;
 
   @ApiProperty()
   @IsString()
-  location: string;
+  @IsOptional()
+  location?: string;
 
   @ApiProperty()
   @IsString()
-  address: string;
+  @IsOptional()
+  address?: string;
 
   @ApiProperty()
   @IsString()
@@ -41,7 +45,4 @@ export class createDocumentDto {
   @ApiProperty({ type: [PageListDto] })
   @IsArray()
   page_list: PageListDto[];
-
-  @ApiProperty()
-  dc_data: Buffer;
 }

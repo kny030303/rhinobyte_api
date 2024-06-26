@@ -7,7 +7,18 @@ import { ClsModule } from 'nestjs-cls';
 import { randomUUID } from 'crypto';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './database/user';
-import { AccessUserEntity } from './database';
+import {
+  AccessUserEntity,
+  PageLabelCodeEntity,
+  PageLabelEntity,
+  PageLabelHistoryEntity,
+  PagesEntity,
+} from './database';
+import {
+  DocumentLabelEntity,
+  DocumentLabelHistoryEntity,
+  DocumentsEntity,
+} from './database/document';
 
 @Module({
   imports: [
@@ -16,15 +27,25 @@ import { AccessUserEntity } from './database';
       useFactory: () => ({
         type: 'mysql',
         timezone: '+09:00',
-        host: 'localhost',
-        port: 3306,
-        username: 'root',
-        password: 'asdf1234',
-        database: 'gen_ap_pl',
+        host: process.env.DATABASE_HOST,
+        port: Number(process.env.DATABASE_PORT),
+        username: process.env.DATABASE_USER,
+        password: process.env.DATABASE_PASSWORD,
+        database: process.env.DATABASE_NAME,
         logging: true,
         autoLoadEntities: true,
         synchronize: true,
-        entities: [UserEntity, AccessUserEntity],
+        entities: [
+          UserEntity,
+          AccessUserEntity,
+          DocumentsEntity,
+          DocumentLabelEntity,
+          DocumentLabelHistoryEntity,
+          PagesEntity,
+          PageLabelEntity,
+          PageLabelCodeEntity,
+          PageLabelHistoryEntity,
+        ],
       }),
     }),
     ClsModule.forRoot({
