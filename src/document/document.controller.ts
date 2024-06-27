@@ -49,10 +49,10 @@ export class DocumentController {
   })
   @Post('/document')
   @UseInterceptors(FileInterceptor('dc_data'))
-  async crate(
+  async create(
     @AuthenticatedUser() user: AccessTokenPayloads,
     @UploadedFile() dc_data: Express.Multer.File,
-    @Body() body: createDocumentDto,
+    @Body() body,
   ): Promise<CreateDocumentResponseDto> {
     try {
       const email = user.email;

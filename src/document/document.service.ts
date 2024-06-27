@@ -64,26 +64,25 @@ export class DocumentService {
       CREATED_BY: email,
       LAST_MODIFIED_BY: email,
     });
+    await this.documentsRepository.save(documentEntity);
 
-    for (const label of dc_label) {
-      // TODO: DB에 document label 저장
-      await this.documentLabelRepository.create({
-        DOC_ID: documentEntity.DOC_ID,
-        TYPE_CODE: label,
-      });
+    // TODO: DB에 document label 저장
+    await this.documentLabelRepository.save({
+      DOC_ID: documentEntity.DOC_ID,
+      TYPE_CODE: dc_label,
+    });
 
-      // TODO: DB에 document label history 저장
-      await this.documentLabelHistoryRepository.create({
-        DOC_ID: documentEntity.DOC_ID,
-        TYPE_CODE: label,
-        LABELER_ID: email,
-      });
-    }
+    // TODO: DB에 document label history 저장
+    await this.documentLabelHistoryRepository.save({
+      DOC_ID: documentEntity.DOC_ID,
+      TYPE_CODE: dc_label,
+      LABELER_ID: email,
+    });
 
     for (let i = 0; i < total_page; i++) {
       // TODO: DB에 page 저장
-      const label = page_list[i].label;
-      const page = await this.pagesRepository.create({
+      const label_list = page_list[i].label_list;
+      const page = await this.pagesRepository.save({
         DOC_ID: documentEntity.DOC_ID,
         PAGE_NO: i + 1,
         CREATED_BY: email,
@@ -91,29 +90,29 @@ export class DocumentService {
       });
 
       // TODO: DB에 page label 저장
-      await this.pageLabelRepository.create({
+      await this.pageLabelRepository.save({
         PAGE_ID: page.PAGE_ID,
-        L1_CODE: label[0] ?? null,
-        L2_CODE: label[1] ?? null,
-        L3_CODE: label[2] ?? null,
-        L4_CODE: label[3] ?? null,
-        L5_CODE: label[4] ?? null,
-        LABEL_YN: label[0] ? 'Y' : 'N',
+        L1_CODE: label_list[0] ?? null,
+        L2_CODE: label_list[1] ?? null,
+        L3_CODE: label_list[2] ?? null,
+        L4_CODE: label_list[3] ?? null,
+        L5_CODE: label_list[4] ?? null,
+        LABEL_YN: label_list[0] ? 'Y' : 'N',
       });
 
-      await this.pageLabelHistoryRepository.create({
+      await this.pageLabelHistoryRepository.save({
         PAGE_ID: page.PAGE_ID,
-        L1_CODE: label[0] ?? null,
-        L2_CODE: label[1] ?? null,
-        L3_CODE: label[2] ?? null,
-        L4_CODE: label[3] ?? null,
-        L5_CODE: label[4] ?? null,
+        L1_CODE: label_list[0] ?? null,
+        L2_CODE: label_list[1] ?? null,
+        L3_CODE: label_list[2] ?? null,
+        L4_CODE: label_list[3] ?? null,
+        L5_CODE: label_list[4] ?? null,
         LABELER_ID: email,
       });
     }
 
     return new CreateDocumentResponseDto({
-      dc_id: 0,
+      dc_id: documentEntity.DOC_ID,
       file_path,
       message: 'SUCCESS',
     });

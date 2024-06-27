@@ -12,7 +12,7 @@ import {
   LoginUserResponseDto,
   AccessUserDto,
 } from './dto';
-import { EmailService } from 'src/email';
+import { EmailService } from '../email';
 import { JwtService } from '@nestjs/jwt';
 import { PasswordService } from '../password';
 import { AccessUserRepository, UserRepository } from '../database';

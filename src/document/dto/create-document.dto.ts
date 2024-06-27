@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class PageListDto {
-  label: string[];
+  label_list: string[];
 }
 
 export class createDocumentDto {
@@ -43,6 +43,5 @@ export class createDocumentDto {
   total_page: number;
 
   @ApiProperty({ type: [PageListDto] })
-  @IsArray()
   page_list: PageListDto[];
 }

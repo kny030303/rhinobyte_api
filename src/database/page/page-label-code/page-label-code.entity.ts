@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('PAGE_LABEL_CODE')
 export class PageLabelCodeEntity {
   @PrimaryGeneratedColumn()
   public CODE!: number;

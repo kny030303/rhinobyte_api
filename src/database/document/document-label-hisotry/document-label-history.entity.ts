@@ -5,7 +5,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('DOCUMENT_LABEL_HISTORY')
 export class DocumentLabelHistoryEntity {
   @PrimaryGeneratedColumn()
   public SEQ!: number;

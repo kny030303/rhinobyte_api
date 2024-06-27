@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('DOCUMENTS')
 export class DocumentsEntity {
   @PrimaryGeneratedColumn()
   public DOC_ID!: number;

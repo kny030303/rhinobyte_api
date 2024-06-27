@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('DOCUMENT_LABEL')
 export class DocumentLabelEntity {
   @PrimaryGeneratedColumn()
   public SEQ!: number;

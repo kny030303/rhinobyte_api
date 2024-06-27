@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('PAGES')
 export class PagesEntity {
   @PrimaryGeneratedColumn()
   public PAGE_ID!: number;
