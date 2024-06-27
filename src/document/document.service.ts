@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { createDocumentDto, CreateDocumentResponseDto } from './dto';
+import {
+  createDocumentDto,
+  CreateDocumentResponseDto,
+  ResponseDocumentDto,
+  GetDocumentResponseDto,
+} from './dto';
 import { S3Service } from '../s3';
-import { GetDocumentResponseDto } from './dto/get-document-response.dto';
 import {
   DocumentLabelHistoryRepository,
   DocumentLabelRepository,
@@ -23,9 +27,30 @@ export class DocumentService {
     private readonly pageLabelHistoryRepository: PageLabelHistoryRepository,
   ) {}
 
-  getByEmail(email: string): GetDocumentResponseDto {
+  async getByEmail(email: string): Promise<GetDocumentResponseDto> {
     // TODO: email로 document 조회
-    return new GetDocumentResponseDto();
+    const documents = await this.documentsRepository.find({
+      where: {
+        CREATED_BY: email,
+      },
+      relations: ['DOCUMENT_LABELS'],
+    });
+
+    const response: GetDocumentResponseDto = {
+      message: 'SUCCESS',
+      dc_list: documents.map(
+        (document): ResponseDocumentDto => ({
+          dc_id: document.DOC_ID,
+          dc_name: document.FILE_NAME,
+          file_path: document.FILE_PATH,
+          category: document.DOC_CATEGORY,
+          total_page: document.TOTAL_PAGES,
+          label_list: document.DOCUMENT_LABELS.map((label) => label.TYPE_CODE),
+        }),
+      ),
+    };
+
+    return new GetDocumentResponseDto(response);
   }
 
   async createDocument(
@@ -35,7 +60,7 @@ export class DocumentService {
   ): Promise<CreateDocumentResponseDto> {
     const {
       dc_name,
-      dc_label,
+      dc_label_list,
       category,
       client,
       business,
@@ -66,18 +91,20 @@ export class DocumentService {
     });
     await this.documentsRepository.save(documentEntity);
 
-    // TODO: DB에 document label 저장
-    await this.documentLabelRepository.save({
-      DOC_ID: documentEntity.DOC_ID,
-      TYPE_CODE: dc_label,
-    });
+    for (const dc_label of dc_label_list) {
+      // TODO: DB에 document label 저장
+      await this.documentLabelRepository.save({
+        DOC_ID: documentEntity.DOC_ID,
+        TYPE_CODE: dc_label,
+      });
 
-    // TODO: DB에 document label history 저장
-    await this.documentLabelHistoryRepository.save({
-      DOC_ID: documentEntity.DOC_ID,
-      TYPE_CODE: dc_label,
-      LABELER_ID: email,
-    });
+      // TODO: DB에 document label history 저장
+      await this.documentLabelHistoryRepository.save({
+        DOC_ID: documentEntity.DOC_ID,
+        TYPE_CODE: dc_label,
+        LABELER_ID: email,
+      });
+    }
 
     for (let i = 0; i < total_page; i++) {
       // TODO: DB에 page 저장

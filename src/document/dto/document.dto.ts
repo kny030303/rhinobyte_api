@@ -14,16 +14,16 @@ export class ResponseDocumentDto {
   category: string;
 
   @ApiProperty()
-  client: string;
+  client?: string;
 
   @ApiProperty()
-  business: string;
+  business?: string;
 
   @ApiProperty()
-  location: string;
+  location?: string;
 
   @ApiProperty()
-  address: string;
+  address?: string;
 
   @ApiProperty()
   label_list: string[];

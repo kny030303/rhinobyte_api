@@ -1,11 +1,17 @@
+import { PagesEntity } from '../../../database/page';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { DocumentLabelEntity } from '../document-label';
 
 @Entity('DOCUMENTS')
 export class DocumentsEntity {
@@ -54,4 +60,10 @@ export class DocumentsEntity {
 
   @DeleteDateColumn()
   public DELETED_AT?: Date;
+
+  @OneToOne(() => PagesEntity, (entity) => entity.DOCUMENT)
+  public PAGES!: PagesEntity;
+
+  @OneToMany(() => DocumentLabelEntity, (entity) => entity.DOCUMENT)
+  public DOCUMENT_LABELS!: DocumentLabelEntity[];
 }

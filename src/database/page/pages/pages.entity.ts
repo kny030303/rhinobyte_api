@@ -1,7 +1,10 @@
+import { DocumentsEntity } from '../../../database/document';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -12,7 +15,7 @@ export class PagesEntity {
   @PrimaryGeneratedColumn()
   public PAGE_ID!: number;
 
-  @PrimaryColumn({ nullable: false })
+  @PrimaryColumn()
   public DOC_ID!: number;
 
   @Column({ nullable: false })
@@ -39,4 +42,8 @@ export class PagesEntity {
 
   @Column({ length: 255, nullable: false })
   public LAST_MODIFIED_BY!: string;
+
+  @OneToOne(() => DocumentsEntity, (entity) => entity.PAGES)
+  @JoinColumn({ name: 'DOC_ID', referencedColumnName: 'DOC_ID' })
+  public DOCUMENT!: DocumentsEntity;
 }

@@ -52,7 +52,7 @@ export class DocumentController {
   async create(
     @AuthenticatedUser() user: AccessTokenPayloads,
     @UploadedFile() dc_data: Express.Multer.File,
-    @Body() body,
+    @Body() body: createDocumentDto,
   ): Promise<CreateDocumentResponseDto> {
     try {
       const email = user.email;

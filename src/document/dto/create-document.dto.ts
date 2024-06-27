@@ -35,8 +35,7 @@ export class createDocumentDto {
   address?: string;
 
   @ApiProperty()
-  @IsString()
-  dc_label: string;
+  dc_label_list: string[];
 
   @ApiProperty()
   @IsString()
