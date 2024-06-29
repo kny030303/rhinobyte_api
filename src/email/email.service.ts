@@ -22,7 +22,7 @@ export class EmailService {
       const mailOptions = {
         to: email,
         subject: '[RHINOBYTE] 회원가입 이메일 인증 메일입니다.',
-        html: `인증링크 : <a href="http://localhost:3000/user/access/?email=${email}&verify_key=${verifyKey}">여기를 눌러주세요</a> <br> 인증링크는 30분 후 만료됩니다.`,
+        html: `인증링크 : <a href="${this.configService.get<string>('SERVER_HOST')}/user/access/?email=${email}&verify_key=${verifyKey}">여기를 눌러주세요</a> <br> 인증링크는 30분 후 만료됩니다.`,
       };
 
       await transporter.sendMail(mailOptions);
