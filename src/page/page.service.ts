@@ -23,7 +23,7 @@ export class PageService {
       pageIdList: [],
     };
 
-    // TODO: file_name으로  검색
+    //  file_name으로 검색
     if (pageRequest.file_name_list.length > 0) {
       const documents = await this.documentsRepository.find({
         where: {
@@ -36,7 +36,7 @@ export class PageService {
       );
     }
 
-    // TODO: page_label로 검색
+    // page_label로 검색
     if (pageRequest.page_label_list.length > 0) {
       const pages = await this.pageLabelRepository.find({
         where: [
@@ -51,7 +51,7 @@ export class PageService {
       searchCriteria.pageIdList.push(...pages.map((page) => page.PAGE_ID));
     }
 
-    // TODO: dc_label_list로 검색
+    // dc_label_list로 검색
     if (pageRequest.dc_label_list.length > 0) {
       const documentLabels = await this.documentLabelRepository.find({
         where: {
@@ -64,7 +64,7 @@ export class PageService {
       );
     }
 
-    // TODO: 검색 조건에 맞게 페이지를 검색합니다.
+    // 검색 조건에 맞게 페이지를 검색합니다.
     const pages = await this.pagesRepository.find({
       where: [
         {

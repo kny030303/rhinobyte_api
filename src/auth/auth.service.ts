@@ -30,9 +30,9 @@ export class AuthService {
   async signup(signUpRequest: SignupUserDto): Promise<SignupUserResponseDto> {
     const { email, password } = signUpRequest;
 
-    // TODO: test 이후 주석 해제
-    // this.checkVerifyEmail(email);
+    this.checkVerifyEmail(email);
 
+    // user email 중복 체크
     const user = await this.userRepository.findOne({
       where: { USER_EMAIL: email },
     });
@@ -62,12 +62,12 @@ export class AuthService {
   async login(loginRequest: LoginUserDto): Promise<LoginUserResponseDto> {
     const { email, password } = loginRequest;
 
-    // TODO: test 이후 주석 해제
-    // this.checkVerifyEmail(email);
+    this.checkVerifyEmail(email);
 
     const hashPassword = await this.passwordService.hashPassword(password);
-
     const payload = { email };
+
+    // user email, password 체크
     const user = await this.userRepository.findOne({
       where: { USER_EMAIL: email, USER_PASSWORD: hashPassword },
     });
@@ -127,6 +127,7 @@ export class AuthService {
   }
 
   private checkVerifyEmail(email: string): void {
+    // promotion.kr 도메인만 허용
     if (email.split('@')[1] !== 'promotion.kr') {
       throw new NotAcceptableException('Invalid email domain');
     }
