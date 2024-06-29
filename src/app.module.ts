@@ -7,13 +7,7 @@ import { ClsModule } from 'nestjs-cls';
 import { randomUUID } from 'crypto';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './database/user';
-import {
-  AccessUserEntity,
-  PageLabelCodeEntity,
-  PageLabelEntity,
-  PageLabelHistoryEntity,
-  PagesEntity,
-} from './database';
+import { AccessUserEntity, PageLabelEntity, PagesEntity } from './database';
 import {
   DocumentLabelEntity,
   DocumentLabelHistoryEntity,
@@ -43,8 +37,6 @@ import {
           DocumentLabelHistoryEntity,
           PagesEntity,
           PageLabelEntity,
-          PageLabelCodeEntity,
-          PageLabelHistoryEntity,
         ],
       }),
     }),

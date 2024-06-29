@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, UseGuards } from '@nestjs/common';
 import { PageService } from './page.service';
 import { AuthenticationGuard } from '../auth';
 import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
@@ -15,7 +15,7 @@ export class PageController {
   @ApiCreatedResponse({
     type: SearchPageResposneDto,
   })
-  @Post()
+  @Get()
   async search(@Body() body: SearchPageDto): Promise<SearchPageResposneDto> {
     return await this.pageService.search(body);
   }

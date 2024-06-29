@@ -7,9 +7,6 @@ import {
   DocumentLabelHistoryRepositoryModule,
   DocumentLabelRepositoryModule,
   DocumentsRepositoryModule,
-  PageLabelHistoryRepositoryModule,
-  PageLabelRepositoryModule,
-  PagesRepositoryModule,
 } from '../database';
 
 @Module({
@@ -19,9 +16,6 @@ import {
     DocumentsRepositoryModule,
     DocumentLabelRepositoryModule,
     DocumentLabelHistoryRepositoryModule,
-    PagesRepositoryModule,
-    PageLabelRepositoryModule,
-    PageLabelHistoryRepositoryModule,
   ],
   controllers: [DocumentController],
   providers: [DocumentService],

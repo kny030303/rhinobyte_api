@@ -48,9 +48,9 @@ export class AuthController {
     summary: '회원가입 성공 인증 API',
   })
   @Get('/access')
-  async access(@Query() user: AccessUserDto): Promise<void> {
+  async access(@Query() user: AccessUserDto): Promise<string> {
     try {
-      await this.userService.access(user);
+      return await this.userService.access(user);
     } catch (error) {
       throw error;
     }

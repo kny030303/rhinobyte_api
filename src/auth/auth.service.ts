@@ -59,15 +59,22 @@ export class AuthService {
     });
   }
 
-  async login(user: LoginUserDto): Promise<LoginUserResponseDto> {
-    const { email, password } = user;
+  async login(loginRequest: LoginUserDto): Promise<LoginUserResponseDto> {
+    const { email, password } = loginRequest;
 
     // TODO: test 이후 주석 해제
     // this.checkVerifyEmail(email);
 
-    await this.passwordService.verify(email, password);
+    const hashPassword = await this.passwordService.hashPassword(password);
 
     const payload = { email };
+    const user = await this.userRepository.findOne({
+      where: { USER_EMAIL: email, USER_PASSWORD: hashPassword },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
     return new LoginUserResponseDto({
       user: {
@@ -78,8 +85,16 @@ export class AuthService {
     });
   }
 
-  async access(accessUserRequest: AccessUserDto): Promise<void> {
+  async access(accessUserRequest: AccessUserDto): Promise<string> {
     const { email, verify_key } = accessUserRequest;
+
+    const user = await this.userRepository.findOne({
+      where: { USER_EMAIL: email },
+    });
+
+    if (user) {
+      throw new ConflictException('There is a same user already.');
+    }
     const accessUser = await this.accessUserRepository.findOne({
       where: {
         USER_EMAIL: email,
@@ -100,6 +115,8 @@ export class AuthService {
       USER_EMAIL: email,
       USER_PASSWORD: accessUser.USER_PASSWORD,
     });
+
+    return '정상 가입 되셨습니다.';
   }
 
   private generateVerifyKey(email: string): string {

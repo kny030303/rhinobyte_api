@@ -10,9 +10,6 @@ import {
   DocumentLabelHistoryRepository,
   DocumentLabelRepository,
   DocumentsRepository,
-  PageLabelHistoryRepository,
-  PageLabelRepository,
-  PagesRepository,
 } from '../database';
 
 @Injectable()
@@ -22,9 +19,6 @@ export class DocumentService {
     private readonly documentsRepository: DocumentsRepository,
     private readonly documentLabelRepository: DocumentLabelRepository,
     private readonly documentLabelHistoryRepository: DocumentLabelHistoryRepository,
-    private readonly pagesRepository: PagesRepository,
-    private readonly pageLabelRepository: PageLabelRepository,
-    private readonly pageLabelHistoryRepository: PageLabelHistoryRepository,
   ) {}
 
   async getByEmail(email: string): Promise<GetDocumentResponseDto> {
@@ -67,7 +61,6 @@ export class DocumentService {
       location,
       address,
       total_page,
-      page_list,
     } = document;
 
     // s3에 document 저장
@@ -103,39 +96,6 @@ export class DocumentService {
       await this.documentLabelHistoryRepository.save({
         DOC_ID: documentEntity.DOC_ID,
         TYPE_CODE: dc_label,
-        LABELER_ID: email,
-      });
-    }
-
-    for (let i = 0; i < total_page; i++) {
-      // DB에 page 저장
-      const label_list = page_list[i].label_list;
-      const page = await this.pagesRepository.save({
-        DOC_ID: documentEntity.DOC_ID,
-        PAGE_NO: i + 1,
-        CREATED_BY: email,
-        LAST_MODIFIED_BY: email,
-      });
-
-      // DB에 page label 저장
-      await this.pageLabelRepository.save({
-        PAGE_ID: page.PAGE_ID,
-        L1_CODE: label_list[0] ?? null,
-        L2_CODE: label_list[1] ?? null,
-        L3_CODE: label_list[2] ?? null,
-        L4_CODE: label_list[3] ?? null,
-        L5_CODE: label_list[4] ?? null,
-        LABEL_YN: label_list[0] ? 'Y' : 'N',
-      });
-
-      // DB에 page label history 저장
-      await this.pageLabelHistoryRepository.save({
-        PAGE_ID: page.PAGE_ID,
-        L1_CODE: label_list[0] ?? null,
-        L2_CODE: label_list[1] ?? null,
-        L3_CODE: label_list[2] ?? null,
-        L4_CODE: label_list[3] ?? null,
-        L5_CODE: label_list[4] ?? null,
         LABELER_ID: email,
       });
     }
