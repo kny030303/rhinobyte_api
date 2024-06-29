@@ -5,16 +5,13 @@ export class PageListDto {
   dc_id: number;
 
   @ApiProperty()
-  file_name: string;
-
-  @ApiProperty()
   page_id: number;
 
   @ApiProperty()
-  data: Buffer;
+  page_no: number;
 
   @ApiProperty()
-  label_list: string[];
+  created_at: string;
 }
 
 export class SearchPageResposneDto {

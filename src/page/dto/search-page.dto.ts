@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsNumber } from 'class-validator';
 
 export class SearchPageDto {
   @ApiProperty()
-  @IsString()
-  file_name: string;
+  @IsArray()
+  file_name_list: string[];
 
   @ApiProperty()
-  @IsString()
-  page_label: string[];
+  @IsArray()
+  page_label_list: string[];
 
   @ApiProperty()
   @IsArray()

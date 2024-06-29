@@ -16,7 +16,7 @@ export class PageController {
     type: SearchPageResposneDto,
   })
   @Post()
-  search(@Body() body: SearchPageDto): SearchPageResposneDto {
-    return this.pageService.search(body);
+  async search(@Body() body: SearchPageDto): Promise<SearchPageResposneDto> {
+    return await this.pageService.search(body);
   }
 }
