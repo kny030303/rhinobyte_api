@@ -28,7 +28,7 @@ export class DocumentService {
   ) {}
 
   async getByEmail(email: string): Promise<GetDocumentResponseDto> {
-    // TODO: email로 document 조회
+    // email로 document 조회
     const documents = await this.documentsRepository.find({
       where: {
         CREATED_BY: email,
@@ -70,13 +70,12 @@ export class DocumentService {
       page_list,
     } = document;
 
-    // TODO: s3에 document 저장
+    // s3에 document 저장
     const file_path = await this.s3Service.uploadPdfFile({
       file_name: `${category}/${dc_name}`,
       buffer: data,
     });
 
-    // TODO: DB에 document 저장
     const documentEntity = await this.documentsRepository.create({
       DOC_CATEGORY: category,
       FILE_NAME: dc_name,
@@ -89,16 +88,18 @@ export class DocumentService {
       CREATED_BY: email,
       LAST_MODIFIED_BY: email,
     });
+
+    // DB에 document 저장
     await this.documentsRepository.save(documentEntity);
 
     for (const dc_label of dc_label_list) {
-      // TODO: DB에 document label 저장
+      // DB에 document label 저장
       await this.documentLabelRepository.save({
         DOC_ID: documentEntity.DOC_ID,
         TYPE_CODE: dc_label,
       });
 
-      // TODO: DB에 document label history 저장
+      // DB에 document label history 저장
       await this.documentLabelHistoryRepository.save({
         DOC_ID: documentEntity.DOC_ID,
         TYPE_CODE: dc_label,
@@ -107,7 +108,7 @@ export class DocumentService {
     }
 
     for (let i = 0; i < total_page; i++) {
-      // TODO: DB에 page 저장
+      // DB에 page 저장
       const label_list = page_list[i].label_list;
       const page = await this.pagesRepository.save({
         DOC_ID: documentEntity.DOC_ID,
@@ -116,7 +117,7 @@ export class DocumentService {
         LAST_MODIFIED_BY: email,
       });
 
-      // TODO: DB에 page label 저장
+      // DB에 page label 저장
       await this.pageLabelRepository.save({
         PAGE_ID: page.PAGE_ID,
         L1_CODE: label_list[0] ?? null,
@@ -127,6 +128,7 @@ export class DocumentService {
         LABEL_YN: label_list[0] ? 'Y' : 'N',
       });
 
+      // DB에 page label history 저장
       await this.pageLabelHistoryRepository.save({
         PAGE_ID: page.PAGE_ID,
         L1_CODE: label_list[0] ?? null,

@@ -7,5 +7,6 @@ import { AuthModule } from '../auth';
   imports: [AuthModule],
   controllers: [PageController],
   providers: [PageService],
+  exports: [PageService],
 })
 export class PageModule {}

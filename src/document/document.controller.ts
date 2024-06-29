@@ -19,8 +19,8 @@ import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
 import { GetDocumentResponseDto } from './dto/get-document-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('/documents')
 @UseGuards(AuthenticationGuard)
+@Controller('/documents')
 export class DocumentController {
   constructor(private readonly documentService: DocumentService) {}
 
