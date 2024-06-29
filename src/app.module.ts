@@ -13,6 +13,7 @@ import {
   DocumentLabelHistoryEntity,
   DocumentsEntity,
 } from './database/document';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -53,7 +54,7 @@ import {
     DocumentModule,
     DocumentModule,
   ],
-  controllers: [],
+  controllers: [HealthController],
   providers: [],
 })
 export class AppModule {}
