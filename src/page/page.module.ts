@@ -7,7 +7,7 @@ import {
   DocumentsRepositoryModule,
   PageLabelRepositoryModule,
   PagesRepositoryModule,
-} from 'src/database';
+} from '../database';
 
 @Module({
   imports: [

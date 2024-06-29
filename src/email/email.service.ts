@@ -6,7 +6,7 @@ import { createTransport } from 'nodemailer';
 export class EmailService {
   constructor(private readonly configService: ConfigService) {}
 
-  async sendEmail(email: string, verify_key: string): Promise<void> {
+  async sendEmail(email: string, verifyKey: string): Promise<void> {
     try {
       const transporter = createTransport({
         host: 'smtp.example.com',
@@ -22,7 +22,7 @@ export class EmailService {
       const mailOptions = {
         to: email,
         subject: '[RHINOBYTE] 회원가입 이메일 인증 메일입니다.',
-        html: `인증링크 : <a href="http://localhost:3000/user/access/?email=${email}?verify_key=${verify_key}">여기를 눌러주세요</a>`,
+        html: `인증링크 : <a href="http://localhost:3000/user/access/?email=${email}?verify_key=${verifyKey}">여기를 눌러주세요</a>`,
       };
 
       await transporter.sendMail(mailOptions);
