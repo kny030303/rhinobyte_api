@@ -127,8 +127,8 @@ export class AuthService {
   }
 
   private checkVerifyEmail(email: string): void {
-    // promotion.kr 도메인만 허용
-    if (email.split('@')[1] !== 'promotion.kr') {
+    // promotion.co.kr 도메인만 허용
+    if (email.split('@')[1] !== 'promotion.co.kr') {
       throw new NotAcceptableException('Invalid email domain');
     }
   }
