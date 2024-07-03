@@ -1,7 +1,4 @@
 {
-  "engines": {
-    "node": "22.2.0"
-  },
   "name": "gen_ap_pl",
   "version": "0.0.1",
   "description": "",
