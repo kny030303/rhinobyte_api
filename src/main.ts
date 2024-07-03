@@ -20,7 +20,7 @@ async function bootstrap() {
     app.get(ConfigService).get('APPLICATION_PORT') ?? 3000,
     () => {
       console.log(
-        'Sever console log.',
+        'Server is listening on:',
         app.get(ConfigService).get('APPLICATION_PORT'),
       );
     },
