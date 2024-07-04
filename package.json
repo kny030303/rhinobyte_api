@@ -20,6 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@types/multer": "^1.4.11",
+    "@types/express": "^4.17.17",
     "@aws-sdk/client-s3": "^3.600.0",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/common": "^10.0.0",
@@ -42,9 +44,7 @@
   "devDependencies": {
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.3.9",
-    "@types/express": "^4.17.17",
     "@types/jest": "^29.5.2",
-    "@types/multer": "^1.4.11",
     "@types/node": "^20.14.9",
     "@types/nodemailer": "^6.4.15",
     "@types/supertest": "^6.0.0",

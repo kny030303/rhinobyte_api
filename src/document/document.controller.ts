@@ -51,7 +51,7 @@ export class DocumentController {
   @UseInterceptors(FileInterceptor('dc_data'))
   async create(
     @AuthenticatedUser() user: AccessTokenPayloads,
-    @UploadedFile() dc_data: Express.Multer.File,
+    @UploadedFile() dc_data: any,
     @Body() body: createDocumentDto,
   ): Promise<CreateDocumentResponseDto> {
     try {

@@ -50,7 +50,7 @@ export class DocumentService {
   async createDocument(
     email: string,
     document: createDocumentDto,
-    data: Express.Multer.File,
+    data: any,
   ): Promise<CreateDocumentResponseDto> {
     const {
       dc_name,
