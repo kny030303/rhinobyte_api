@@ -34,7 +34,7 @@ export class AuthService {
 
     // user email 중복 체크
     const user = await this.userRepository.findOne({
-      where: { USER_EMAIL: email },
+      where: { EMAIL: email },
     });
 
     if (user) {
@@ -45,8 +45,8 @@ export class AuthService {
     const verifyKey = this.generateVerifyKey(email);
 
     const userEntity = await this.accessUserRepository.create({
-      USER_EMAIL: email,
-      USER_PASSWORD: hashPassword,
+      EMAIL: email,
+      PASSWORD: hashPassword,
       USER_VERIFY_KEY: verifyKey,
     });
 
@@ -54,7 +54,7 @@ export class AuthService {
     await this.emailService.sendEmail(signUpRequest.email, verifyKey);
 
     return new SignupUserResponseDto({
-      user: { email: userEntity.USER_EMAIL },
+      user: { email: userEntity.EMAIL },
       message: 'SUCCESS',
     });
   }
@@ -69,7 +69,7 @@ export class AuthService {
 
     // user email, password 체크
     const user = await this.userRepository.findOne({
-      where: { USER_EMAIL: email, USER_PASSWORD: hashPassword },
+      where: { EMAIL: email, PASSWORD: hashPassword },
     });
 
     if (!user) {
@@ -89,7 +89,7 @@ export class AuthService {
     const { email, verify_key } = accessUserRequest;
 
     const user = await this.userRepository.findOne({
-      where: { USER_EMAIL: email },
+      where: { EMAIL: email },
     });
 
     if (user) {
@@ -97,7 +97,7 @@ export class AuthService {
     }
     const accessUser = await this.accessUserRepository.findOne({
       where: {
-        USER_EMAIL: email,
+        EMAIL: email,
         USER_VERIFY_KEY: verify_key,
         USER_ACCESS: false,
       },
@@ -112,8 +112,8 @@ export class AuthService {
     }
 
     await this.userRepository.save({
-      USER_EMAIL: email,
-      USER_PASSWORD: accessUser.USER_PASSWORD,
+      EMAIL: email,
+      USER_PASSWORD: accessUser.PASSWORD,
     });
 
     return '정상 가입 되셨습니다.';

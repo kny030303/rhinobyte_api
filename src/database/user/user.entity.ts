@@ -11,13 +11,13 @@ import {
 @Entity('USER')
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  public USER_ID!: number;
+  public ID!: number;
 
   @PrimaryColumn({ length: 250, nullable: false })
-  public USER_EMAIL!: string;
+  public EMAIL!: string;
 
   @Column({ length: 64, nullable: false })
-  public USER_PASSWORD!: string;
+  public PASSWORD!: string;
 
   @CreateDateColumn({
     type: 'timestamp',

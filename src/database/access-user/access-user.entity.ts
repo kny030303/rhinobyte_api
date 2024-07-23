@@ -12,10 +12,10 @@ export class AccessUserEntity {
   public ID!: number;
 
   @Column({ length: 250, nullable: false })
-  public USER_EMAIL!: string;
+  public EMAIL!: string;
 
   @Column({ length: 64, nullable: false })
-  public USER_PASSWORD!: string;
+  public PASSWORD!: string;
 
   @Column({ type: 'boolean', nullable: false })
   public USER_ACCESS: boolean = false;
