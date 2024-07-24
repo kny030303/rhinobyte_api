@@ -1,22 +1,25 @@
-import { PagesEntity } from '../../../database/page';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { DocumentLabelEntity } from '../document-label';
+import { DocumentCategoryCodeEntity } from '../document-category-code';
+import { DocumentLabelMappingEntity } from '../document-label-mapping';
+import { PagesEntity } from '../../page';
 
 @Entity('DOCUMENTS')
+@Index('DOCUMENTS_FILE_NAME_INDEX', ['FILE_NAME'])
+@Index('DOCUMENTS_DOC_CATEGORY_INDEX', ['DOC_CATEGORY'])
 export class DocumentsEntity {
   @PrimaryGeneratedColumn()
-  public DOC_ID!: number;
+  public ID!: number;
 
   @Column({ length: 500, nullable: false })
   public DOC_CATEGORY!: string;
@@ -61,9 +64,13 @@ export class DocumentsEntity {
   @DeleteDateColumn()
   public DELETED_AT?: Date;
 
-  @OneToOne(() => PagesEntity, (entity) => entity.DOCUMENT)
-  public PAGES!: PagesEntity;
+  @OneToOne(() => DocumentCategoryCodeEntity, (entity) => entity.DOCUMENTS)
+  @JoinColumn({ name: 'DOC_CATEGORY', referencedColumnName: 'ID' })
+  public DOCUMENT_CATEGORY_CODE!: DocumentCategoryCodeEntity;
 
-  @OneToMany(() => DocumentLabelEntity, (entity) => entity.DOCUMENT)
-  public DOCUMENT_LABELS!: DocumentLabelEntity[];
+  @OneToMany(() => DocumentLabelMappingEntity, (entity) => entity.DOCUMENTS)
+  public DOCUMENT_LABEL_MAPPING?: DocumentLabelMappingEntity;
+
+  @OneToMany(() => PagesEntity, (entity) => entity.DOCUMENTS)
+  public PAGES?: PagesEntity;
 }

@@ -10,7 +10,7 @@ import { UserEntity } from './database/user';
 import { AccessUserEntity, PageLabelEntity, PagesEntity } from './database';
 import {
   DocumentLabelEntity,
-  DocumentLabelHistoryEntity,
+  DocumentLabelMappingEntity,
   DocumentsEntity,
 } from './database/document';
 import { HealthController } from './health.controller';
@@ -35,9 +35,7 @@ import { HealthController } from './health.controller';
           AccessUserEntity,
           DocumentsEntity,
           DocumentLabelEntity,
-          DocumentLabelHistoryEntity,
-          PagesEntity,
-          PageLabelEntity,
+          DocumentLabelMappingEntity,
         ],
       }),
     }),
@@ -51,7 +49,6 @@ import { HealthController } from './health.controller';
     }),
     AuthModule,
     PageModule,
-    DocumentModule,
     DocumentModule,
   ],
   controllers: [HealthController],

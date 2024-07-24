@@ -6,11 +6,7 @@ import {
   GetDocumentResponseDto,
 } from './dto';
 import { S3Service } from '../s3';
-import {
-  DocumentLabelHistoryRepository,
-  DocumentLabelRepository,
-  DocumentsRepository,
-} from '../database';
+import { DocumentLabelRepository, DocumentsRepository } from '../database';
 
 @Injectable()
 export class DocumentService {
@@ -18,7 +14,6 @@ export class DocumentService {
     private readonly s3Service: S3Service,
     private readonly documentsRepository: DocumentsRepository,
     private readonly documentLabelRepository: DocumentLabelRepository,
-    private readonly documentLabelHistoryRepository: DocumentLabelHistoryRepository,
   ) {}
 
   async getByEmail(email: string): Promise<GetDocumentResponseDto> {
@@ -34,12 +29,12 @@ export class DocumentService {
       message: 'SUCCESS',
       dc_list: documents.map(
         (document): ResponseDocumentDto => ({
-          dc_id: document.DOC_ID,
+          dc_id: document.ID,
           dc_name: document.FILE_NAME,
           file_path: document.FILE_PATH,
           category: document.DOC_CATEGORY,
           total_page: document.TOTAL_PAGES,
-          label_list: document.DOCUMENT_LABELS.map((label) => label.TYPE_CODE),
+          label_list: [],
         }),
       ),
     };
@@ -87,21 +82,20 @@ export class DocumentService {
 
     for (const dc_label of dc_label_list) {
       // DB에 document label 저장
-      await this.documentLabelRepository.save({
-        DOC_ID: documentEntity.DOC_ID,
-        TYPE_CODE: dc_label,
-      });
-
+      // await this.documentLabelRepository.save({
+      //   DOC_ID: documentEntity.ID,
+      //   TYPE_CODE: dc_label,
+      // });
       // DB에 document label history 저장
-      await this.documentLabelHistoryRepository.save({
-        DOC_ID: documentEntity.DOC_ID,
-        TYPE_CODE: dc_label,
-        LABELER_ID: email,
-      });
+      // await this.documentLabelHistoryRepository.save({
+      //   DOC_ID: documentEntity.ID,
+      //   TYPE_CODE: dc_label,
+      //   LABELER_ID: email,
+      // });
     }
 
     return new CreateDocumentResponseDto({
-      dc_id: documentEntity.DOC_ID,
+      dc_id: documentEntity.ID,
       file_path,
       message: 'SUCCESS',
     });

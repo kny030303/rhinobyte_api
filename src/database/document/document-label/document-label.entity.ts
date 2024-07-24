@@ -1,24 +1,50 @@
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
+  OneToMany,
+  PrimaryColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { DocumentsEntity } from '../documents';
+import { DocumentLabelMappingEntity } from '../document-label-mapping';
 
 @Entity('DOCUMENT_LABEL')
 export class DocumentLabelEntity {
-  @PrimaryGeneratedColumn()
-  public SEQ!: number;
+  @PrimaryColumn()
+  public ID!: string;
 
-  @Column()
-  public DOC_ID!: number;
+  @Column({ length: 255, nullable: false })
+  public CODE_GROUP!: string;
 
-  @ManyToOne(() => DocumentsEntity, (entity) => entity.DOCUMENT_LABELS)
-  @JoinColumn({ name: 'DOC_ID', referencedColumnName: 'DOC_ID' })
-  public DOCUMENT!: DocumentsEntity;
+  @Column({ length: 255, nullable: true })
+  public CODE_KOR: string;
 
-  @Column({ length: 500, nullable: false })
-  public TYPE_CODE!: string;
+  @Column({ length: 255, nullable: true })
+  public CODE_ENG: string;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+  })
+  public CREATED_AT!: Date;
+
+  @Column({ length: 255, nullable: false })
+  public CREATED_BY!: string;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+  })
+  public LAST_MODIFIED_AT!: Date;
+
+  @Column({ length: 255, nullable: false })
+  public LAST_MODIFIED_BY!: string;
+
+  @DeleteDateColumn()
+  public DELETED_AT?: Date;
+
+  @OneToMany(
+    () => DocumentLabelMappingEntity,
+    (entity) => entity.DOCUMENT_LABEL,
+  )
+  public DOCUMENT_LABEL_MAPPING!: DocumentLabelMappingEntity;
 }

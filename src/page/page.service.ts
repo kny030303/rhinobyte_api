@@ -32,37 +32,36 @@ export class PageService {
       });
 
       searchCriteria.documentIdList.push(
-        ...documents.map((document) => document.DOC_ID),
+        ...documents.map((document) => document.ID),
       );
     }
 
     // page_label로 검색
     if (pageRequest.page_label_list.length > 0) {
-      const pages = await this.pageLabelRepository.find({
-        where: [
-          { L1_CODE: In(pageRequest.page_label_list) },
-          { L2_CODE: In(pageRequest.page_label_list) },
-          { L3_CODE: In(pageRequest.page_label_list) },
-          { L4_CODE: In(pageRequest.page_label_list) },
-          { L5_CODE: In(pageRequest.page_label_list) },
-        ],
-      });
-
-      searchCriteria.pageIdList.push(...pages.map((page) => page.PAGE_ID));
+      // const pages = await this.pageLabelRepository.find({
+      //   where: [
+      //     { L1_CODE: In(pageRequest.page_label_list) },
+      //     { L2_CODE: In(pageRequest.page_label_list) },
+      //     { L3_CODE: In(pageRequest.page_label_list) },
+      //     { L4_CODE: In(pageRequest.page_label_list) },
+      //     { L5_CODE: In(pageRequest.page_label_list) },
+      //   ],
+      // });
+      // searchCriteria.pageIdList.push(...pages.map((page) => page.ID));
     }
 
     // dc_label_list로 검색
-    if (pageRequest.dc_label_list.length > 0) {
-      const documentLabels = await this.documentLabelRepository.find({
-        where: {
-          TYPE_CODE: In(pageRequest.dc_label_list),
-        },
-      });
+    // if (pageRequest.dc_label_list.length > 0) {
+    //   const documentLabels = await this.documentLabelRepository.find({
+    //     where: {
+    //       TYPE_CODE: In(pageRequest.dc_label_list),
+    //     },
+    //   });
 
-      searchCriteria.documentIdList.push(
-        ...documentLabels.map((document) => document.DOC_ID),
-      );
-    }
+    //   searchCriteria.documentIdList.push(
+    //     ...documentLabels.map((document) => document.DOC_ID),
+    //   );
+    // }
 
     // 검색 조건에 맞게 페이지를 검색합니다.
     const pages = await this.pagesRepository.find({
@@ -71,7 +70,7 @@ export class PageService {
           DOC_ID: In(searchCriteria.documentIdList),
         },
         {
-          PAGE_ID: In(searchCriteria.pageIdList),
+          ID: In(searchCriteria.pageIdList),
         },
       ],
     });
@@ -81,7 +80,7 @@ export class PageService {
       total_page: pages.length,
       page_list: pages.map((page) => ({
         dc_id: page.DOC_ID,
-        page_id: page.PAGE_ID,
+        page_id: page.ID,
         page_no: page.PAGE_NO,
         created_at: page.CREATED_AT.toString(),
       })),

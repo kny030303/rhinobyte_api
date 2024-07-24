@@ -99,7 +99,7 @@ export class AuthService {
       where: {
         EMAIL: email,
         USER_VERIFY_KEY: verify_key,
-        USER_ACCESS: false,
+        ACCESS: false,
       },
     });
 

@@ -4,7 +4,6 @@ import { AuthModule } from '../auth';
 import { S3Module } from '../s3';
 import { DocumentController } from './document.controller';
 import {
-  DocumentLabelHistoryRepositoryModule,
   DocumentLabelRepositoryModule,
   DocumentsRepositoryModule,
 } from '../database';
@@ -15,7 +14,6 @@ import {
     S3Module,
     DocumentsRepositoryModule,
     DocumentLabelRepositoryModule,
-    DocumentLabelHistoryRepositoryModule,
   ],
   controllers: [DocumentController],
   providers: [DocumentService],

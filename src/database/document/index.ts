@@ -1,3 +1,4 @@
 export * from './document-label';
-export * from './document-label-hisotry';
 export * from './documents';
+export * from './document-category-code';
+export * from './document-label-mapping';

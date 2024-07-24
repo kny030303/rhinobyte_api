@@ -1,25 +1,57 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { PageLabelMappingEntity } from '../page-label-mapping';
 
 @Entity('PAGE_LABEL')
 export class PageLabelEntity {
-  @PrimaryGeneratedColumn()
-  public PAGE_ID!: number;
+  @PrimaryColumn()
+  public ID!: string;
 
-  @Column({ length: 500, nullable: true })
-  public L1_CODE?: string;
+  @Column({ length: 255, nullable: true })
+  public CODE_GROUP: string;
 
-  @Column({ length: 500, nullable: true })
-  public L2_CODE?: string;
+  @Column({ length: 255, nullable: true })
+  public PARENT_CODE: string;
 
-  @Column({ length: 500, nullable: true })
-  public L3_CODE?: string;
+  @Column({ length: 255, nullable: true })
+  public CODE_KOR: string;
 
-  @Column({ length: 500, nullable: true })
-  public L4_CODE?: string;
+  @Column({ length: 255, nullable: true })
+  public CODE_ENG: string;
 
-  @Column({ length: 500, nullable: true })
-  public L5_CODE?: string;
+  @Column({ default: false })
+  public CHILD_CODE_YN: boolean;
 
-  @Column({ length: 1, default: 'N' })
-  public LABEL_YN!: string;
+  @Column({ default: false })
+  public USE_CODE_YN: boolean;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+  })
+  public CREATED_AT!: Date;
+
+  @Column({ length: 255, nullable: false })
+  public CREATED_BY!: string;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+  })
+  public LAST_MODIFIED_AT!: Date;
+
+  @Column({ length: 255, nullable: false })
+  public LAST_MODIFIED_BY!: string;
+
+  @DeleteDateColumn()
+  public DELETED_AT?: Date;
+
+  @OneToMany(() => PageLabelMappingEntity, (entity) => entity.PAGE_LABEL)
+  public PAGE_LABEL_MAPPING?: PageLabelMappingEntity;
 }

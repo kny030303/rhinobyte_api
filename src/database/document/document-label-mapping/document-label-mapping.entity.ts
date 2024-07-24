@@ -1,35 +1,28 @@
-import { DocumentsEntity } from '../../document';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { PageLabelMappingEntity } from '../page-label-mapping';
+import { DocumentLabelEntity } from '../document-label';
+import { DocumentsEntity } from '../documents';
 
-@Entity('PAGES')
-@Index('PAGES_DOC_ID_INDEX', ['DOC_ID'])
-export class PagesEntity {
+@Entity('DOCUMENT_LABEL_MAPPING')
+@Index('DOCUMENT_LABEL_MAPPING_DOC_ID_INDEX', ['DOC_ID'])
+@Index('DOCUMENT_LABEL_MAPPING_DOC_LABEL_INDEX', ['DOC_ID', 'LABEL_ID'])
+export class DocumentLabelMappingEntity {
   @PrimaryGeneratedColumn()
   public ID!: number;
 
-  @Column()
+  @Column({ nullable: false })
   public DOC_ID!: number;
 
   @Column({ nullable: false })
-  public PAGE_NO!: number;
-
-  @Column({ nullable: true })
-  public WIDTH?: number;
-
-  @Column({ nullable: true })
-  public HEIGHT?: number;
+  public LABEL_ID!: string;
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -44,16 +37,17 @@ export class PagesEntity {
   })
   public LAST_MODIFIED_AT!: Date;
 
-  @DeleteDateColumn()
-  public DELETED_AT?: Date;
-
   @Column({ length: 255, nullable: false })
   public LAST_MODIFIED_BY!: string;
 
-  @ManyToOne(() => DocumentsEntity, (entity) => entity.PAGES)
+  @ManyToOne(() => DocumentsEntity, (entity) => entity.DOCUMENT_LABEL_MAPPING)
   @JoinColumn({ name: 'DOC_ID', referencedColumnName: 'ID' })
   public DOCUMENTS?: DocumentsEntity;
 
-  @OneToMany(() => PageLabelMappingEntity, (entity) => entity.PAGES)
-  public PAGE_LABEL_MAPPING?: PageLabelMappingEntity;
+  @ManyToOne(
+    () => DocumentLabelEntity,
+    (entity) => entity.DOCUMENT_LABEL_MAPPING,
+  )
+  @JoinColumn({ name: 'LABEL_ID', referencedColumnName: 'ID' })
+  public DOCUMENT_LABEL?: DocumentLabelEntity;
 }
