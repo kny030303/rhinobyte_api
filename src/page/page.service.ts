@@ -1,79 +1,58 @@
 import { Injectable } from '@nestjs/common';
-import { PageListDto, SearchPageDto, SearchPageResposneDto } from './dto';
+import { SearchPageDto, SearchPageResposneDto } from './dto';
 import {
-  DocumentLabelRepository,
-  DocumentsRepository,
-  PageLabelRepository,
-  PagesRepository,
+  DocumentLabelMappingRepository,
+  PageLabelMappingRepository,
+  PagesEntity,
 } from '../database';
 import { In } from 'typeorm';
 
 @Injectable()
 export class PageService {
   constructor(
-    private readonly pagesRepository: PagesRepository,
-    private readonly pageLabelRepository: PageLabelRepository,
-    private readonly documentsRepository: DocumentsRepository,
-    private readonly documentLabelRepository: DocumentLabelRepository,
+    private readonly pageLabelMappingRepository: PageLabelMappingRepository,
+    private readonly documentLabelMappingRepository: DocumentLabelMappingRepository,
   ) {}
 
   async search(pageRequest: SearchPageDto): Promise<SearchPageResposneDto> {
-    const searchCriteria = {
-      documentIdList: [],
-      pageIdList: [],
-    };
+    const { search } = pageRequest;
+    const pages: PagesEntity[] = [];
 
-    //  file_name으로 검색
-    if (pageRequest.file_name_list.length > 0) {
-      const documents = await this.documentsRepository.find({
-        where: {
-          FILE_NAME: In(pageRequest.file_name_list),
-        },
+    if (search.length > 0) {
+      const documentLabelMapping =
+        await this.documentLabelMappingRepository.find({
+          relations: ['DOCUMENTS', 'DOCUMENT_LABEL'],
+          where: [
+            {
+              DOCUMENTS: {
+                FILE_NAME: In(search), // file_name으로 검색
+              },
+            },
+            {
+              DOCUMENT_LABEL: {
+                CODE_KOR: In(search), // dc_label로 검색
+              },
+            },
+          ],
+        });
+      const documentIds = documentLabelMapping.map((mapping) => mapping.DOC_ID);
+
+      const pageLabelMapping = await this.pageLabelMappingRepository.find({
+        relations: ['PAGE_LABEL'],
+        where: [
+          {
+            PAGE_LABEL: In(search), // page_label로 검색
+          },
+          {
+            PAGES: {
+              DOC_ID: In(documentIds),
+            },
+          },
+        ],
       });
 
-      searchCriteria.documentIdList.push(
-        ...documents.map((document) => document.ID),
-      );
+      pages.push(...pageLabelMapping.map((mapping) => mapping.PAGES));
     }
-
-    // page_label로 검색
-    if (pageRequest.page_label_list.length > 0) {
-      // const pages = await this.pageLabelRepository.find({
-      //   where: [
-      //     { L1_CODE: In(pageRequest.page_label_list) },
-      //     { L2_CODE: In(pageRequest.page_label_list) },
-      //     { L3_CODE: In(pageRequest.page_label_list) },
-      //     { L4_CODE: In(pageRequest.page_label_list) },
-      //     { L5_CODE: In(pageRequest.page_label_list) },
-      //   ],
-      // });
-      // searchCriteria.pageIdList.push(...pages.map((page) => page.ID));
-    }
-
-    // dc_label_list로 검색
-    // if (pageRequest.dc_label_list.length > 0) {
-    //   const documentLabels = await this.documentLabelRepository.find({
-    //     where: {
-    //       TYPE_CODE: In(pageRequest.dc_label_list),
-    //     },
-    //   });
-
-    //   searchCriteria.documentIdList.push(
-    //     ...documentLabels.map((document) => document.DOC_ID),
-    //   );
-    // }
-
-    // 검색 조건에 맞게 페이지를 검색합니다.
-    const pages = await this.pagesRepository.find({
-      where: [
-        {
-          DOC_ID: In(searchCriteria.documentIdList),
-        },
-        {
-          ID: In(searchCriteria.pageIdList),
-        },
-      ],
-    });
 
     return new SearchPageResposneDto({
       message: 'SUCCESS',

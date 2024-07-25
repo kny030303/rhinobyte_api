@@ -11,6 +11,8 @@ import {
 import { PageLabelMappingEntity } from '../page-label-mapping';
 
 @Entity('PAGE_LABEL')
+@Index('PAGE_LABEL_KOR_INDEX', ['CODE_KOR'])
+@Index('PAGE_LABEL_ENG_INDEX', ['CODE_ENG'])
 export class PageLabelEntity {
   @PrimaryColumn()
   public ID!: string;

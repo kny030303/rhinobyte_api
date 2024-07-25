@@ -6,14 +6,18 @@ import {
   GetDocumentResponseDto,
 } from './dto';
 import { S3Service } from '../s3';
-import { DocumentLabelRepository, DocumentsRepository } from '../database';
+import {
+  DocumentLabelMappingRepository,
+  DocumentsRepository,
+} from '../database';
+import { In } from 'typeorm';
 
 @Injectable()
 export class DocumentService {
   constructor(
     private readonly s3Service: S3Service,
     private readonly documentsRepository: DocumentsRepository,
-    private readonly documentLabelRepository: DocumentLabelRepository,
+    private readonly documentLabelMappingRepository: DocumentLabelMappingRepository,
   ) {}
 
   async getByEmail(email: string): Promise<GetDocumentResponseDto> {
@@ -25,6 +29,19 @@ export class DocumentService {
       relations: ['DOCUMENT_LABELS'],
     });
 
+    const documentIds = documents.map((document) => document.ID);
+    const documentLabelMapping = await this.documentLabelMappingRepository.find(
+      {
+        where: {
+          DOC_ID: In(documentIds),
+        },
+      },
+    );
+
+    const documentLabels = documentLabelMapping.map(
+      (mapping) => mapping.DOCUMENT_LABEL.ID,
+    );
+
     const response: GetDocumentResponseDto = {
       message: 'SUCCESS',
       dc_list: documents.map(
@@ -34,7 +51,7 @@ export class DocumentService {
           file_path: document.FILE_PATH,
           category: document.DOC_CATEGORY,
           total_page: document.TOTAL_PAGES,
-          label_list: [],
+          label_list: documentLabels,
         }),
       ),
     };
@@ -81,17 +98,10 @@ export class DocumentService {
     await this.documentsRepository.save(documentEntity);
 
     for (const dc_label of dc_label_list) {
-      // DB에 document label 저장
-      // await this.documentLabelRepository.save({
-      //   DOC_ID: documentEntity.ID,
-      //   TYPE_CODE: dc_label,
-      // });
-      // DB에 document label history 저장
-      // await this.documentLabelHistoryRepository.save({
-      //   DOC_ID: documentEntity.ID,
-      //   TYPE_CODE: dc_label,
-      //   LABELER_ID: email,
-      // });
+      await this.documentLabelMappingRepository.create({
+        DOC_ID: documentEntity.ID,
+        LABEL_ID: dc_label,
+      });
     }
 
     return new CreateDocumentResponseDto({

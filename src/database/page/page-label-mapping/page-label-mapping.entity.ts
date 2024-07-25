@@ -13,6 +13,7 @@ import { PageLabelEntity } from '../page-label';
 
 @Entity('PAGE_LABEL_MAPPING')
 @Index('PAGE_LABEL_MAPPING_PAGE_ID_INDEX', ['PAGE_ID'])
+@Index('PAGE_LABEL_MAPPING_LABEL_ID_INDEX', ['LABEL_ID'])
 @Index('PAGE_LABEL_MAPPING_PAGE_LABEL_INDEX', ['PAGE_ID', 'LABEL_ID'])
 export class PageLabelMappingEntity {
   @PrimaryGeneratedColumn()
