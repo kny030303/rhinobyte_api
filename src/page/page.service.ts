@@ -35,13 +35,16 @@ export class PageService {
             },
           ],
         });
+      console.log('documentLabelMapping:::', documentLabelMapping);
       const documentIds = documentLabelMapping.map((mapping) => mapping.DOC_ID);
 
       const pageLabelMapping = await this.pageLabelMappingRepository.find({
-        relations: ['PAGE_LABEL'],
+        relations: ['PAGE_LABEL', 'PAGES'],
         where: [
           {
-            PAGE_LABEL: In(search), // page_label로 검색
+            PAGE_LABEL: {
+              CODE_KOR: In(search), // page_label로 검색
+            },
           },
           {
             PAGES: {

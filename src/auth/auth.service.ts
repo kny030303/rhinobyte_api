@@ -30,7 +30,7 @@ export class AuthService {
   async signup(signUpRequest: SignupUserDto): Promise<SignupUserResponseDto> {
     const { email, password } = signUpRequest;
 
-    this.checkVerifyEmail(email);
+    // TODO this.checkVerifyEmail(email);
 
     // user email 중복 체크
     const user = await this.userRepository.findOne({
@@ -62,7 +62,7 @@ export class AuthService {
   async login(loginRequest: LoginUserDto): Promise<LoginUserResponseDto> {
     const { email, password } = loginRequest;
 
-    this.checkVerifyEmail(email);
+    // TODO this.checkVerifyEmail(email);
 
     const hashPassword = await this.passwordService.hashPassword(password);
     const payload = { email };
@@ -111,9 +111,11 @@ export class AuthService {
       throw new UnauthorizedException('Verify key expired');
     }
 
+    accessUser.ACCESS = true;
+    await this.accessUserRepository.save(accessUser);
     await this.userRepository.save({
       EMAIL: email,
-      USER_PASSWORD: accessUser.PASSWORD,
+      PASSWORD: accessUser.PASSWORD,
     });
 
     return '정상 가입 되셨습니다.';

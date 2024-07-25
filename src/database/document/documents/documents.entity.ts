@@ -5,8 +5,8 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -64,7 +64,7 @@ export class DocumentsEntity {
   @DeleteDateColumn()
   public DELETED_AT?: Date;
 
-  @OneToOne(() => DocumentCategoryCodeEntity, (entity) => entity.DOCUMENTS)
+  @ManyToOne(() => DocumentCategoryCodeEntity, (entity) => entity.DOCUMENTS)
   @JoinColumn({ name: 'DOC_CATEGORY', referencedColumnName: 'ID' })
   public DOCUMENT_CATEGORY_CODE!: DocumentCategoryCodeEntity;
 

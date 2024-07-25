@@ -3,19 +3,15 @@ import { PageController } from './page.controller';
 import { PageService } from './page.service';
 import { AuthModule } from '../auth';
 import {
-  DocumentLabelRepositoryModule,
-  DocumentsRepositoryModule,
-  PageLabelRepositoryModule,
-  PagesRepositoryModule,
+  DocumentLableMappngRepositoryModule,
+  PageLabelMappingRepositoryModule,
 } from '../database';
 
 @Module({
   imports: [
     AuthModule,
-    PagesRepositoryModule,
-    PageLabelRepositoryModule,
-    DocumentsRepositoryModule,
-    DocumentLabelRepositoryModule,
+    PageLabelMappingRepositoryModule,
+    DocumentLableMappngRepositoryModule,
   ],
   controllers: [PageController],
   providers: [PageService],

@@ -29,7 +29,7 @@ import { HealthController } from './health.controller';
         database: process.env.DATABASE_NAME,
         logging: true,
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
         entities: [
           UserEntity,
           AccessUserEntity,

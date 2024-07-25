@@ -98,10 +98,16 @@ export class DocumentService {
     await this.documentsRepository.save(documentEntity);
 
     for (const dc_label of dc_label_list) {
-      await this.documentLabelMappingRepository.create({
-        DOC_ID: documentEntity.ID,
-        LABEL_ID: dc_label,
-      });
+      const documentLabelMappingEntity =
+        await this.documentLabelMappingRepository.create({
+          DOC_ID: documentEntity.ID,
+          LABEL_ID: dc_label,
+          CREATED_BY: email,
+          LAST_MODIFIED_BY: email,
+        });
+      await this.documentLabelMappingRepository.save(
+        documentLabelMappingEntity,
+      );
     }
 
     return new CreateDocumentResponseDto({

@@ -7,7 +7,7 @@ export class DocumentCategoryCodeEntity {
   public ID!: string;
 
   @Column({ length: 255, nullable: false })
-  public COD_GROUP!: string;
+  public CODE_GROUP!: string;
 
   @Column({ length: 255, nullable: true })
   public CODE_KOR: string;
