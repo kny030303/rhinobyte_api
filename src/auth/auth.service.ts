@@ -41,7 +41,7 @@ export class AuthService {
       throw new ConflictException('There is a same user already.');
     }
 
-    const hashPassword = this.passwordService.hashPassword(password);
+    const hashPassword = this.passwordService.encrypt(password);
     const verifyKey = this.generateVerifyKey(email);
 
     const userEntity = await this.accessUserRepository.create({
@@ -51,7 +51,7 @@ export class AuthService {
     });
 
     await this.accessUserRepository.save(userEntity);
-    await this.emailService.sendEmail(signUpRequest.email, verifyKey);
+    await this.emailService.joinEmail(signUpRequest.email, verifyKey);
 
     return new SignupUserResponseDto({
       user: { email: userEntity.EMAIL },
@@ -64,7 +64,7 @@ export class AuthService {
 
     // TODO this.checkVerifyEmail(email);
 
-    const hashPassword = await this.passwordService.hashPassword(password);
+    const hashPassword = await this.passwordService.encrypt(password);
     const payload = { email };
 
     // user email, password 체크

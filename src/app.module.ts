@@ -1,18 +1,19 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth';
-import { DocumentModule } from './document';
-import { PageModule } from './page';
 import { ConfigModule } from '@nestjs/config';
 import { ClsModule } from 'nestjs-cls';
 import { randomUUID } from 'crypto';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './database/user';
-import { AccessUserEntity, PageLabelEntity, PagesEntity } from './database';
 import {
+  UserEntity,
+  AccessUserEntity,
   DocumentLabelEntity,
   DocumentLabelMappingEntity,
   DocumentsEntity,
-} from './database/document';
+} from './database';
+import { AuthModule } from './auth';
+import { DocumentModule } from './document';
+import { PageModule } from './page';
+import { UserModule } from './user';
 import { HealthController } from './health.controller';
 
 @Module({
@@ -50,6 +51,7 @@ import { HealthController } from './health.controller';
     AuthModule,
     PageModule,
     DocumentModule,
+    UserModule,
   ],
   controllers: [HealthController],
   providers: [],

@@ -11,6 +11,7 @@ import {
 
 @Entity('USER')
 @Index('USER_EMAIL_INDEX', ['EMAIL'])
+@Index('USER_EMAIL_PASSWORD_INDEX', ['EMAIL', 'PASSWORD'])
 export class UserEntity {
   @PrimaryGeneratedColumn()
   public ID!: number;

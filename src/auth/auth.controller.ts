@@ -9,7 +9,7 @@ import {
 } from './dto';
 import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
 
-@Controller('user')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly userService: AuthService) {}
 
