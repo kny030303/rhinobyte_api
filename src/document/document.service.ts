@@ -10,11 +10,12 @@ import {
   DocumentLabelMappingRepository,
   DocumentsRepository,
 } from '../database';
-import { In } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class DocumentService {
   constructor(
+    private dataSource: DataSource,
     private readonly s3Service: S3Service,
     private readonly documentsRepository: DocumentsRepository,
     private readonly documentLabelMappingRepository: DocumentLabelMappingRepository,
@@ -82,40 +83,51 @@ export class DocumentService {
       buffer: data,
     });
 
-    const documentEntity = await this.documentsRepository.create({
-      DOC_CATEGORY: category,
-      FILE_NAME: dc_name,
-      FILE_PATH: file_path,
-      TOTAL_PAGES: total_page,
-      CLIENT: client,
-      BUSINESS: business,
-      LOCATION: location,
-      ADDRESS: address,
-      LABEL_YN: document_label_yn === 'true',
-      CREATED_BY: email,
-      LAST_MODIFIED_BY: email,
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    // DB에 document 저장
-    await this.documentsRepository.save(documentEntity);
+    try {
+      const documentEntity = await this.documentsRepository.create({
+        DOC_CATEGORY: category,
+        FILE_NAME: dc_name,
+        FILE_PATH: file_path,
+        TOTAL_PAGES: total_page,
+        CLIENT: client,
+        BUSINESS: business,
+        LOCATION: location,
+        ADDRESS: address,
+        LABEL_YN: document_label_yn === 'true',
+        CREATED_BY: email,
+        LAST_MODIFIED_BY: email,
+      });
 
-    for (const dc_label of dc_label_list) {
-      const documentLabelMappingEntity =
-        await this.documentLabelMappingRepository.create({
-          DOC_ID: documentEntity.ID,
-          LABEL_ID: dc_label,
-          CREATED_BY: email,
-          LAST_MODIFIED_BY: email,
-        });
-      await this.documentLabelMappingRepository.save(
-        documentLabelMappingEntity,
-      );
+      // DB에 document 저장
+      await queryRunner.manager.save(documentEntity);
+
+      for (const dc_label of dc_label_list) {
+        const documentLabelMappingEntity =
+          await this.documentLabelMappingRepository.create({
+            DOC_ID: documentEntity.ID,
+            LABEL_ID: dc_label,
+            CREATED_BY: email,
+            LAST_MODIFIED_BY: email,
+          });
+        await queryRunner.manager.save(documentLabelMappingEntity);
+      }
+
+      await queryRunner.commitTransaction();
+
+      return new CreateDocumentResponseDto({
+        dc_id: documentEntity.ID,
+        file_path,
+        message: 'SUCCESS',
+      });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
-
-    return new CreateDocumentResponseDto({
-      dc_id: documentEntity.ID,
-      file_path,
-      message: 'SUCCESS',
-    });
   }
 }

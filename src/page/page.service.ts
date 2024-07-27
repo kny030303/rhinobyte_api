@@ -11,13 +11,14 @@ import {
   PagesEntity,
   PagesRepository,
 } from '../database';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 import { CreatePageRequestDto } from './dto/create-page.request.dto';
 import { S3Service } from '../s3';
 
 @Injectable()
 export class PageService {
   constructor(
+    private dataSource: DataSource,
     private readonly s3Service: S3Service,
     private readonly pageLabelMappingRepository: PageLabelMappingRepository,
     private readonly documentLabelMappingRepository: DocumentLabelMappingRepository,
@@ -104,33 +105,45 @@ export class PageService {
       buffer: data,
     });
 
-    const pageEntity = await this.pagesRepository.create({
-      DOC_ID: dc_id,
-      PAGE_NO: page_no,
-      LABEL_YN: page_label_yn === 'true',
-      WIDTH: width,
-      HEIGHT: height,
-      CREATED_BY: email,
-      LAST_MODIFIED_BY: email,
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    await this.pagesRepository.save(pageEntity);
+    try {
+      const pageEntity = await this.pagesRepository.create({
+        DOC_ID: dc_id,
+        PAGE_NO: page_no,
+        LABEL_YN: page_label_yn === 'true',
+        WIDTH: width,
+        HEIGHT: height,
+        CREATED_BY: email,
+        LAST_MODIFIED_BY: email,
+      });
 
-    for (const page_label of page_label_list) {
-      const pageLabellMappingEntity =
-        await this.pageLabelMappingRepository.create({
-          PAGE_ID: page_no,
-          LABEL_ID: page_label,
-          CREATED_BY: email,
-          LAST_MODIFIED_BY: email,
-        });
-      await this.pageLabelMappingRepository.save(pageLabellMappingEntity);
+      await queryRunner.manager.save(pageEntity);
+
+      for (const page_label of page_label_list) {
+        const pageLabellMappingEntity =
+          await this.pageLabelMappingRepository.create({
+            PAGE_ID: page_no,
+            LABEL_ID: page_label,
+            CREATED_BY: email,
+            LAST_MODIFIED_BY: email,
+          });
+        await queryRunner.manager.save(pageLabellMappingEntity);
+      }
+      await queryRunner.commitTransaction();
+
+      return new CreatePageResponseDto({
+        page_id: pageEntity.ID,
+        file_path,
+        message: 'SUCCESS',
+      });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
-
-    return new CreatePageResponseDto({
-      page_id: pageEntity.ID,
-      file_path,
-      message: 'SUCCESS',
-    });
   }
 }
