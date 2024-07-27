@@ -11,7 +11,7 @@ import {
   PagesEntity,
   PagesRepository,
 } from '../database';
-import { In, DataSource } from 'typeorm';
+import { In, DataSource, Like } from 'typeorm';
 import { CreatePageRequestDto } from './dto/create-page.request.dto';
 import { S3Service } from '../s3';
 
@@ -34,9 +34,9 @@ export class PageService {
 
     if (search.length > 0) {
       const documents = await this.documentsRepository.find({
-        where: {
-          FILE_NAME: In(search), // file_name으로 검색
-        },
+        where: search.map((value) => ({
+          FILE_NAME: Like(`%${value}%`),
+        })),
       });
 
       const documentLabelMapping =
