@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
-export class createDocumentDto {
+export class CreateDocumentRequestDto {
   @ApiProperty()
   @IsString()
   dc_name: string;

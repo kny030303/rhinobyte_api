@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import {
-  createDocumentDto,
+  CreateDocumentRequestDto,
   CreateDocumentResponseDto,
-  ResponseDocumentDto,
+  DocumentResponseDto,
   GetDocumentResponseDto,
 } from './dto';
 import { S3Service } from '../s3';
@@ -21,48 +21,47 @@ export class DocumentService {
   ) {}
 
   async getByEmail(email: string): Promise<GetDocumentResponseDto> {
+    const response: DocumentResponseDto[] = [];
+
     // email로 document 조회
     const documents = await this.documentsRepository.find({
       where: {
         CREATED_BY: email,
       },
-      relations: ['DOCUMENT_LABELS'],
     });
 
-    const documentIds = documents.map((document) => document.ID);
-    const documentLabelMapping = await this.documentLabelMappingRepository.find(
-      {
-        where: {
-          DOC_ID: In(documentIds),
-        },
-      },
-    );
+    // document label 조회
+    for (const document of documents) {
+      const documentLabelMapping =
+        await this.documentLabelMappingRepository.find({
+          relations: ['DOCUMENT_LABEL'],
+          where: {
+            DOC_ID: document.ID,
+          },
+        });
 
-    const documentLabels = documentLabelMapping.map(
-      (mapping) => mapping.DOCUMENT_LABEL.ID,
-    );
+      const label_ids = documentLabelMapping.map((mapping) => mapping.LABEL_ID);
 
-    const response: GetDocumentResponseDto = {
+      response.push({
+        dc_id: document.ID,
+        dc_name: document.FILE_NAME,
+        file_path: document.FILE_PATH,
+        category: document.DOC_CATEGORY,
+        total_page: document.TOTAL_PAGES,
+        label_list: label_ids,
+        document_label_yn: document.LABEL_YN,
+      });
+    }
+
+    return new GetDocumentResponseDto({
       message: 'SUCCESS',
-      dc_list: documents.map(
-        (document): ResponseDocumentDto => ({
-          dc_id: document.ID,
-          dc_name: document.FILE_NAME,
-          file_path: document.FILE_PATH,
-          category: document.DOC_CATEGORY,
-          total_page: document.TOTAL_PAGES,
-          label_list: documentLabels,
-          document_label_yn: document.LABEL_YN,
-        }),
-      ),
-    };
-
-    return new GetDocumentResponseDto(response);
+      dc_list: response,
+    });
   }
 
-  async createDocument(
+  async create(
     email: string,
-    document: createDocumentDto,
+    document: CreateDocumentRequestDto,
     data: any,
   ): Promise<CreateDocumentResponseDto> {
     const {

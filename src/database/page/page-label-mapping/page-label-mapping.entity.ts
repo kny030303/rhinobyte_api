@@ -20,10 +20,10 @@ export class PageLabelMappingEntity {
   public ID!: number;
 
   @Column()
-  public PAGE_ID: number;
+  public PAGE_ID!: number;
 
   @Column()
-  public LABEL_ID: number;
+  public LABEL_ID!: string;
 
   @CreateDateColumn({
     type: 'timestamp',

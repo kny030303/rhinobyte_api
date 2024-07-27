@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ResponseDocumentDto {
+export class DocumentResponseDto {
   @ApiProperty()
   dc_id: number;
 

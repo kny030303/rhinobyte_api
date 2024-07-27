@@ -8,10 +8,12 @@ import {
   PageLabelMappingRepositoryModule,
   PagesRepositoryModule,
 } from '../database';
+import { S3Module } from '../s3';
 
 @Module({
   imports: [
     AuthModule,
+    S3Module,
     PageLabelMappingRepositoryModule,
     DocumentLableMappngRepositoryModule,
     PagesRepositoryModule,

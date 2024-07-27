@@ -18,14 +18,28 @@ export class S3Service {
     });
   }
 
+  uploadJpgFile(file: fileDto): Promise<string> {
+    const { file_name, buffer } = file;
+    const contentType = 'application/jpg';
+
+    return this.uploadS3File(file, contentType);
+  }
+
   async uploadPdfFile(file: fileDto): Promise<string> {
+    const { file_name, buffer } = file;
+    const contentType = 'application/pdf';
+
+    return this.uploadS3File(file, contentType);
+  }
+
+  async uploadS3File(file: fileDto, contentType: string): Promise<string> {
     const { file_name, buffer } = file;
 
     const command = new PutObjectCommand({
       Bucket: this.configService.get<string>('AWS_BUCKET_NAME'),
       Key: file_name,
       Body: buffer.buffer,
-      ContentType: 'application/pdf',
+      ContentType: contentType,
     });
 
     await this.s3Client.send(command);

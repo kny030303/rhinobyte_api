@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { SearchPageDto, SearchPageResposneDto } from './dto';
+import {
+  CreatePageResponseDto,
+  SearchPageRequestDto,
+  SearchPageResposneDto,
+} from './dto';
 import {
   DocumentLabelMappingRepository,
   DocumentsRepository,
@@ -8,17 +12,22 @@ import {
   PagesRepository,
 } from '../database';
 import { In } from 'typeorm';
+import { CreatePageRequestDto } from './dto/create-page.request.dto';
+import { S3Service } from '../s3';
 
 @Injectable()
 export class PageService {
   constructor(
+    private readonly s3Service: S3Service,
     private readonly pageLabelMappingRepository: PageLabelMappingRepository,
     private readonly documentLabelMappingRepository: DocumentLabelMappingRepository,
     private readonly documentsRepository: DocumentsRepository,
     private readonly pagesRepository: PagesRepository,
   ) {}
 
-  async search(pageRequest: SearchPageDto): Promise<SearchPageResposneDto> {
+  async search(
+    pageRequest: SearchPageRequestDto,
+  ): Promise<SearchPageResposneDto> {
     const { search } = pageRequest;
     const pages: PagesEntity[] = [];
 
@@ -78,6 +87,50 @@ export class PageService {
         page_no: page.PAGE_NO,
         created_at: page.CREATED_AT.toString(),
       })),
+    });
+  }
+
+  async create(
+    email: string,
+    page: CreatePageRequestDto,
+    data: any,
+  ): Promise<CreatePageResponseDto> {
+    const { dc_id, page_label_list, page_label_yn, page_no, width, height } =
+      page;
+
+    // s3에 page 저장
+    const file_path = await this.s3Service.uploadJpgFile({
+      file_name: `pages/${dc_id}/page_${page_no}`,
+      buffer: data,
+    });
+
+    const pageEntity = await this.pagesRepository.create({
+      DOC_ID: dc_id,
+      PAGE_NO: page_no,
+      LABEL_YN: page_label_yn === 'true',
+      WIDTH: width,
+      HEIGHT: height,
+      CREATED_BY: email,
+      LAST_MODIFIED_BY: email,
+    });
+
+    await this.pagesRepository.save(pageEntity);
+
+    for (const page_label of page_label_list) {
+      const pageLabellMappingEntity =
+        await this.pageLabelMappingRepository.create({
+          PAGE_ID: page_no,
+          LABEL_ID: page_label,
+          CREATED_BY: email,
+          LAST_MODIFIED_BY: email,
+        });
+      await this.pageLabelMappingRepository.save(pageLabellMappingEntity);
+    }
+
+    return new CreatePageResponseDto({
+      page_id: pageEntity.ID,
+      file_path,
+      message: 'SUCCESS',
     });
   }
 }

@@ -9,12 +9,14 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { PageLabelMappingEntity } from '../page-label-mapping';
 
 @Entity('PAGES')
 @Index('PAGES_DOC_ID_INDEX', ['DOC_ID'])
+@Unique(['DOC_ID', 'PAGE_NO'])
 export class PagesEntity {
   @PrimaryGeneratedColumn()
   public ID!: number;
@@ -32,7 +34,7 @@ export class PagesEntity {
   public HEIGHT?: number;
 
   @Column({ default: false })
-  public LABEL_YN: boolean;
+  public LABEL_YN?: boolean;
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNumber } from 'class-validator';
+import { IsArray } from 'class-validator';
 
-export class SearchPageDto {
+export class SearchPageRequestDto {
   @ApiProperty()
   @IsArray()
   search: string[];

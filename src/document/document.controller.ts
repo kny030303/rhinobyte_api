@@ -8,16 +8,19 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
 import { DocumentService } from './document.service';
 import {
   AccessTokenPayloads,
   AuthenticatedUser,
   AuthenticationGuard,
 } from '../auth';
-import { createDocumentDto, CreateDocumentResponseDto } from './dto';
-import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
-import { GetDocumentResponseDto } from './dto/get-document-response.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  CreateDocumentRequestDto,
+  CreateDocumentResponseDto,
+  GetDocumentResponseDto,
+} from './dto';
 
 @UseGuards(AuthenticationGuard)
 @Controller('/documents')
@@ -52,11 +55,11 @@ export class DocumentController {
   async create(
     @AuthenticatedUser() user: AccessTokenPayloads,
     @UploadedFile() dc_data: any,
-    @Body() body: createDocumentDto,
+    @Body() body: CreateDocumentRequestDto,
   ): Promise<CreateDocumentResponseDto> {
     try {
       const email = user.email;
-      return await this.documentService.createDocument(email, body, dc_data);
+      return await this.documentService.create(email, body, dc_data);
     } catch (error) {
       throw error;
     }
