@@ -3,13 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { ClsModule } from 'nestjs-cls';
 import { randomUUID } from 'crypto';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  UserEntity,
-  AccessUserEntity,
-  DocumentLabelEntity,
-  DocumentLabelMappingEntity,
-  DocumentsEntity,
-} from './database';
+// import {
+//   UserEntity,
+//   AccessUserEntity,
+//   DocumentLabelEntity,
+//   DocumentLabelMappingEntity,
+//   DocumentsEntity,
+// } from './database';
 import { AuthModule } from './auth';
 import { DocumentModule } from './document';
 import { PageModule } from './page';
@@ -31,13 +31,13 @@ import { HealthController } from './health.controller';
         logging: true,
         autoLoadEntities: true,
         synchronize: false,
-        entities: [
-          UserEntity,
-          AccessUserEntity,
-          DocumentsEntity,
-          DocumentLabelEntity,
-          DocumentLabelMappingEntity,
-        ],
+        // entities: [
+        //   UserEntity,
+        //   AccessUserEntity,
+        //   DocumentsEntity,
+        //   DocumentLabelEntity,
+        //   DocumentLabelMappingEntity,
+        // ],
       }),
     }),
     ClsModule.forRoot({

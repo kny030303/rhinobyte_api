@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class createDocumentDto {
   @ApiProperty()
@@ -36,4 +36,8 @@ export class createDocumentDto {
   @ApiProperty()
   @IsString()
   total_page: number;
+
+  @ApiProperty()
+  @IsString()
+  document_label_yn: 'true' | 'false';
 }

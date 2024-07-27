@@ -30,4 +30,7 @@ export class ResponseDocumentDto {
 
   @ApiProperty()
   total_page: number;
+
+  @ApiProperty()
+  document_label_yn: boolean;
 }

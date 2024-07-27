@@ -45,6 +45,9 @@ export class DocumentsEntity {
   @Column({ length: 500, nullable: true })
   public ADDRESS?: string;
 
+  @Column({ default: false })
+  public LABEL_YN: boolean;
+
   @CreateDateColumn({
     type: 'timestamp',
   })

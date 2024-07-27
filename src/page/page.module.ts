@@ -4,7 +4,9 @@ import { PageService } from './page.service';
 import { AuthModule } from '../auth';
 import {
   DocumentLableMappngRepositoryModule,
+  DocumentsRepositoryModule,
   PageLabelMappingRepositoryModule,
+  PagesRepositoryModule,
 } from '../database';
 
 @Module({
@@ -12,6 +14,8 @@ import {
     AuthModule,
     PageLabelMappingRepositoryModule,
     DocumentLableMappngRepositoryModule,
+    PagesRepositoryModule,
+    DocumentsRepositoryModule,
   ],
   controllers: [PageController],
   providers: [PageService],

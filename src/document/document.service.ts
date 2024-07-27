@@ -52,6 +52,7 @@ export class DocumentService {
           category: document.DOC_CATEGORY,
           total_page: document.TOTAL_PAGES,
           label_list: documentLabels,
+          document_label_yn: document.LABEL_YN,
         }),
       ),
     };
@@ -73,6 +74,7 @@ export class DocumentService {
       location,
       address,
       total_page,
+      document_label_yn,
     } = document;
 
     // s3에 document 저장
@@ -90,6 +92,7 @@ export class DocumentService {
       BUSINESS: business,
       LOCATION: location,
       ADDRESS: address,
+      LABEL_YN: document_label_yn === 'true',
       CREATED_BY: email,
       LAST_MODIFIED_BY: email,
     });

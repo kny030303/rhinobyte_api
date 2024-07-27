@@ -31,6 +31,9 @@ export class PagesEntity {
   @Column({ nullable: true })
   public HEIGHT?: number;
 
+  @Column({ default: false })
+  public LABEL_YN: boolean;
+
   @CreateDateColumn({
     type: 'timestamp',
   })
