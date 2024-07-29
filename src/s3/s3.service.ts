@@ -20,14 +20,14 @@ export class S3Service {
 
   uploadJpgFile(file: fileDto): Promise<string> {
     const contentType = 'image/jpeg';
-    file.file_name = `documents/${file.file_name}.jpeg`;
+    file.file_name = `${file.file_name}.jpeg`;
 
     return this.uploadS3File(file, contentType);
   }
 
   async uploadPdfFile(file: fileDto): Promise<string> {
     const contentType = 'application/pdf';
-    file.file_name = `documents/${file.file_name}.pdf`;
+    file.file_name = `${file.file_name}.pdf`;
 
     return this.uploadS3File(file, contentType);
   }

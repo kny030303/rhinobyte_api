@@ -99,12 +99,6 @@ export class PageService {
     const { dc_id, page_label_list, page_label_yn, page_no, width, height } =
       page;
 
-    // s3에 page 저장
-    const file_path = await this.s3Service.uploadJpgFile({
-      file_name: `pages/${dc_id}/page_${page_no}`,
-      buffer: data,
-    });
-
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -132,6 +126,13 @@ export class PageService {
           });
         await queryRunner.manager.save(pageLabellMappingEntity);
       }
+
+      // s3에 page 저장
+      const file_path = await this.s3Service.uploadJpgFile({
+        file_name: `pages/${dc_id}/page_${page_no}`,
+        buffer: data,
+      });
+
       await queryRunner.commitTransaction();
 
       return new CreatePageResponseDto({

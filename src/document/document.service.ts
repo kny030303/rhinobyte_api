@@ -77,12 +77,6 @@ export class DocumentService {
       document_label_yn,
     } = document;
 
-    // s3에 document 저장
-    const file_path = await this.s3Service.uploadPdfFile({
-      file_name: `${category}/${dc_name}`,
-      buffer: data,
-    });
-
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -91,7 +85,7 @@ export class DocumentService {
       const documentEntity = await this.documentsRepository.create({
         DOC_CATEGORY: category,
         FILE_NAME: dc_name,
-        FILE_PATH: file_path,
+        FILE_PATH: '',
         TOTAL_PAGES: total_page,
         CLIENT: client,
         BUSINESS: business,
@@ -101,9 +95,6 @@ export class DocumentService {
         CREATED_BY: email,
         LAST_MODIFIED_BY: email,
       });
-
-      // DB에 document 저장
-      await queryRunner.manager.save(documentEntity);
 
       for (const dc_label of dc_label_list) {
         const documentLabelMappingEntity =
@@ -115,6 +106,16 @@ export class DocumentService {
           });
         await queryRunner.manager.save(documentLabelMappingEntity);
       }
+
+      // s3에 document 저장
+      const file_path = await this.s3Service.uploadPdfFile({
+        file_name: `${category}/${dc_name}`,
+        buffer: data,
+      });
+
+      documentEntity.FILE_PATH = file_path;
+      // DB에 document 저장
+      await queryRunner.manager.save(documentEntity);
 
       await queryRunner.commitTransaction();
 
