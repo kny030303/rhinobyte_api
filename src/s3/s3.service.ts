@@ -19,31 +19,35 @@ export class S3Service {
   }
 
   uploadJpgFile(file: fileDto): Promise<string> {
-    const { file_name, buffer } = file;
-    const contentType = 'application/jpg';
+    const contentType = 'image/jpeg';
+    const extension = '.jpeg';
 
-    return this.uploadS3File(file, contentType);
+    return this.uploadS3File(file, contentType, extension);
   }
 
   async uploadPdfFile(file: fileDto): Promise<string> {
-    const { file_name, buffer } = file;
     const contentType = 'application/pdf';
+    const extension = '.pdf';
 
-    return this.uploadS3File(file, contentType);
+    return this.uploadS3File(file, contentType, extension);
   }
 
-  async uploadS3File(file: fileDto, contentType: string): Promise<string> {
+  async uploadS3File(
+    file: fileDto,
+    contentType: string,
+    extension: string,
+  ): Promise<string> {
     const { file_name, buffer } = file;
 
     const command = new PutObjectCommand({
       Bucket: this.configService.get<string>('AWS_BUCKET_NAME'),
-      Key: file_name,
+      Key: `${file_name}${extension}`,
       Body: buffer.buffer,
       ContentType: contentType,
     });
 
     await this.s3Client.send(command);
 
-    return `https://s3.${this.configService.get<string>('AWS_REGION')}.amazonaws.com/${this.configService.get<string>('AWS_BUCKET_NAME')}/${file_name}`;
+    return `https://s3.${this.configService.get<string>('AWS_REGION')}.amazonaws.com/${this.configService.get<string>('AWS_BUCKET_NAME')}/${file_name}${extension}`;
   }
 }
