@@ -30,7 +30,7 @@ export class AuthService {
   async signup(signUpRequest: SignupUserDto): Promise<SignupUserResponseDto> {
     const { email, password } = signUpRequest;
 
-    TODO this.checkVerifyEmail(email);
+    this.checkVerifyEmail(email);
 
     // user email 중복 체크
     const user = await this.userRepository.findOne({
@@ -62,7 +62,7 @@ export class AuthService {
   async login(loginRequest: LoginUserDto): Promise<LoginUserResponseDto> {
     const { email, password } = loginRequest;
 
-    TODO this.checkVerifyEmail(email);
+    this.checkVerifyEmail(email);
 
     const hashPassword = await this.passwordService.encrypt(password);
     const payload = { email };
