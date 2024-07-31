@@ -7,6 +7,7 @@ import {
 } from './dto';
 import { S3Service } from '../s3';
 import {
+  DocumentCategoryCodeRepository,
   DocumentLabelMappingRepository,
   DocumentsRepository,
 } from '../database';
@@ -18,6 +19,7 @@ export class DocumentService {
     private dataSource: DataSource,
     private readonly s3Service: S3Service,
     private readonly documentsRepository: DocumentsRepository,
+    private readonly documentCategoryCodeRepository: DocumentCategoryCodeRepository,
     private readonly documentLabelMappingRepository: DocumentLabelMappingRepository,
   ) {}
 
@@ -95,6 +97,8 @@ export class DocumentService {
         CREATED_BY: email,
         LAST_MODIFIED_BY: email,
       });
+      // DB에 document 저장
+      await queryRunner.manager.save(documentEntity);
 
       for (const dc_label of dc_label_list) {
         const documentLabelMappingEntity =
@@ -104,17 +108,23 @@ export class DocumentService {
             CREATED_BY: email,
             LAST_MODIFIED_BY: email,
           });
+        // DB에 document label 저장
         await queryRunner.manager.save(documentLabelMappingEntity);
       }
 
+      const { CODE_KOR } = await this.documentCategoryCodeRepository.findOne({
+        where: {
+          ID: category,
+        },
+      });
+
       // s3에 document 저장
       const file_path = await this.s3Service.uploadPdfFile({
-        file_name: `${category}/${dc_name}`,
+        file_name: `${CODE_KOR}/${dc_name}`,
         buffer: data,
       });
 
       documentEntity.FILE_PATH = file_path;
-      // DB에 document 저장
       await queryRunner.manager.save(documentEntity);
 
       await queryRunner.commitTransaction();

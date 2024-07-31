@@ -4,6 +4,7 @@ import { AuthModule } from '../auth';
 import { S3Module } from '../s3';
 import { DocumentController } from './document.controller';
 import {
+  DocumentCategoryCodeRepositoryModule,
   DocumentLableMappngRepositoryModule,
   DocumentsRepositoryModule,
 } from '../database';
@@ -13,6 +14,7 @@ import {
     AuthModule,
     S3Module,
     DocumentsRepositoryModule,
+    DocumentCategoryCodeRepositoryModule,
     DocumentLableMappngRepositoryModule,
   ],
   controllers: [DocumentController],
