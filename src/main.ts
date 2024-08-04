@@ -8,6 +8,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(new ValidationPipe());
+  app.enableCors({
+    origin: ['https://pl-ai-front.vercel.app', 'http://localhost:5173'],
+    credentials: true,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('rhinobyte API')
